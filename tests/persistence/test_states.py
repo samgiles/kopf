@@ -31,7 +31,7 @@ def storage(request):
 
 @pytest.fixture()
 def handler():
-    return Mock(id='some-id', spec_set=['id'])
+    return Mock(id='some-id', status_prefix=True, spec_set=['id', 'status_prefix'])
 
 
 #
@@ -663,11 +663,22 @@ def test_store_result(handler, expected_patch, result):
     assert patch == expected_patch
 
 
+@pytest.mark.parametrize('result, expected_patch', [
+    (None, {}),
+    ('string', {'status': {'string': {}}}),
+    ({'field': 'value'}, {'status': {'field': 'value'}}),
+])
+def test_store_result_no_prefix(handler, expected_patch, result):
+    handler.status_prefix = False
+    patch = Patch()
+    outcomes = {handler.id: HandlerOutcome(final=True, handler=handler, result=result)}
+    deliver_results(outcomes=outcomes, patch=patch)
+    assert patch == expected_patch
+
+
 #
 # Purging the state in the storage.
 #
-
-
 def test_purge_progress_when_exists_in_body(storage, handler):
     body = {'status': {'kopf': {'progress': {'some-id': {'retries': 5}}}}}
     patch = Patch()
