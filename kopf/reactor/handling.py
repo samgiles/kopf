@@ -91,6 +91,7 @@ async def execute(
     cause = cause if cause is not None else cause_var.get()
     parent_handler: handlers_.BaseHandler = handler_var.get()
     parent_prefix = parent_handler.id if parent_handler is not None else None
+    parent_status_prefix = parent_handler.status_prefix if parent_handler else None
 
     # Validate the inputs; the function signatures cannot put these kind of restrictions, so we do.
     if len([v for v in [fns, handlers, registry] if v is not None]) > 1:
@@ -106,7 +107,7 @@ async def execute(
                 selector=None, labels=None, annotations=None, when=None,
                 initial=None, deleted=None, requires_finalizer=None,
                 reason=None, field=None, value=None, old=None, new=None,
-                field_needs_change=None,
+                field_needs_change=None, status_prefix=parent_status_prefix,
             )
             subregistry.append(handler)
 
@@ -120,7 +121,7 @@ async def execute(
                 selector=None, labels=None, annotations=None, when=None,
                 initial=None, deleted=None, requires_finalizer=None,
                 reason=None, field=None, value=None, old=None, new=None,
-                field_needs_change=None,
+                field_needs_change=None, status_prefix=parent_status_prefix,
             )
             subregistry.append(handler)
 

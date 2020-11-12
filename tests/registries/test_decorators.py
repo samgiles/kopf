@@ -84,6 +84,7 @@ def test_on_resume_minimal(reason, cause_factory, resource):
     assert handlers[0].field is None
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == True
 
 
 def test_on_create_minimal(cause_factory, resource):
@@ -109,6 +110,7 @@ def test_on_create_minimal(cause_factory, resource):
     assert handlers[0].field is None
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == True
 
 
 def test_on_update_minimal(cause_factory, resource):
@@ -134,6 +136,7 @@ def test_on_update_minimal(cause_factory, resource):
     assert handlers[0].field is None
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == True
 
 
 def test_on_delete_minimal(cause_factory, resource):
@@ -159,6 +162,7 @@ def test_on_delete_minimal(cause_factory, resource):
     assert handlers[0].field is None
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == True
 
 
 def test_on_field_minimal(cause_factory, resource):
@@ -186,6 +190,7 @@ def test_on_field_minimal(cause_factory, resource):
     assert handlers[0].value is None
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == True
 
 
 def test_on_field_fails_without_field(resource):
@@ -271,7 +276,7 @@ def test_on_resume_with_most_kwargs(mocker, reason, cause_factory, resource):
                     field='field.subfield', value=999,
                     labels={'somelabel': 'somevalue'},
                     annotations={'someanno': 'somevalue'},
-                    when=when)
+                    when=when, status_prefix=False)
     def fn(**_):
         pass
 
@@ -292,6 +297,7 @@ def test_on_resume_with_most_kwargs(mocker, reason, cause_factory, resource):
     assert handlers[0].value == 999
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == False
 
 
 def test_on_create_with_most_kwargs(mocker, cause_factory, resource):
@@ -307,7 +313,7 @@ def test_on_create_with_most_kwargs(mocker, cause_factory, resource):
                     field='field.subfield', value=999,
                     labels={'somelabel': 'somevalue'},
                     annotations={'someanno': 'somevalue'},
-                    when=when)
+                    when=when, status_prefix=False)
     def fn(**_):
         pass
 
@@ -327,6 +333,7 @@ def test_on_create_with_most_kwargs(mocker, cause_factory, resource):
     assert handlers[0].value == 999
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == False
 
 
 def test_on_update_with_most_kwargs(mocker, cause_factory, resource):
@@ -342,7 +349,7 @@ def test_on_update_with_most_kwargs(mocker, cause_factory, resource):
                     field='field.subfield', value=999,
                     labels={'somelabel': 'somevalue'},
                     annotations={'someanno': 'somevalue'},
-                    when=when)
+                    when=when, status_prefix=False)
     def fn(**_):
         pass
 
@@ -362,6 +369,7 @@ def test_on_update_with_most_kwargs(mocker, cause_factory, resource):
     assert handlers[0].value == 999
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == False
 
 
 @pytest.mark.parametrize('optional', [
@@ -382,7 +390,7 @@ def test_on_delete_with_most_kwargs(mocker, cause_factory, optional, resource):
                     field='field.subfield', value=999,
                     labels={'somelabel': 'somevalue'},
                     annotations={'someanno': 'somevalue'},
-                    when=when)
+                    when=when, status_prefix=False)
     def fn(**_):
         pass
 
@@ -402,6 +410,7 @@ def test_on_delete_with_most_kwargs(mocker, cause_factory, optional, resource):
     assert handlers[0].value == 999
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix == False
 
 
 def test_on_field_with_most_kwargs(mocker, cause_factory, resource):
@@ -419,7 +428,7 @@ def test_on_field_with_most_kwargs(mocker, cause_factory, resource):
                    field='field.subfield', value=999,
                    labels={'somelabel': 'somevalue'},
                    annotations={'someanno': 'somevalue'},
-                   when=when)
+                   when=when, status_prefix=False)
     def fn(**_):
         pass
 
@@ -439,6 +448,7 @@ def test_on_field_with_most_kwargs(mocker, cause_factory, resource):
     assert handlers[0].value == 999
     assert handlers[0].old is None
     assert handlers[0].new is None
+    assert handlers[0].status_prefix is False
 
 
 def test_subhandler_fails_with_no_parent_handler():
@@ -471,6 +481,7 @@ def test_subhandler_declaratively(parent_handler, cause_factory):
     handlers = registry.get_handlers(cause)
     assert len(handlers) == 1
     assert handlers[0].fn is fn
+    assert handlers[0].status_prefix == parent_handler.status_prefix
 
 
 def test_subhandler_imperatively(parent_handler, cause_factory):
@@ -488,6 +499,23 @@ def test_subhandler_imperatively(parent_handler, cause_factory):
     handlers = registry.get_handlers(cause)
     assert len(handlers) == 1
     assert handlers[0].fn is fn
+
+
+def test_subhandler_with_all_kwargs(parent_handler, cause_factory):
+    cause = cause_factory(reason=Reason.UPDATE)
+
+    registry = ResourceChangingRegistry()
+    subregistry_var.set(registry)
+
+    with context([(handler_var, parent_handler)]):
+        @kopf.on.this(status_prefix = False)
+        def fn(**_):
+            pass
+
+    handlers = registry.get_handlers(cause)
+    assert len(handlers) == 1
+    assert handlers[0].fn is fn
+    assert handlers[0].status_prefix == False
 
 
 @pytest.mark.parametrize('decorator, kwargs', [

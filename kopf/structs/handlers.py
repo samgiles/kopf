@@ -158,6 +158,7 @@ class ResourceChangingHandler(ResourceHandler):
     field_needs_change: Optional[bool]  # to identify on-field/on-update with support for old=/new=.
     old: Optional[filters.ValueFilter]
     new: Optional[filters.ValueFilter]
+    status_prefix: Optional[bool]
 
 
 @dataclasses.dataclass
