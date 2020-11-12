@@ -40,6 +40,7 @@ Kopf: Kubernetes Operators Framework
    memos
    indexing
    admission
+   status
 
 .. toctree::
    :maxdepth: 2
