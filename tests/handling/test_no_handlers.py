@@ -31,6 +31,7 @@ async def test_skipped_with_no_handlers(
         selector=selector, annotations=None, labels=None, when=None,
         field=None, value=None, old=None, new=None, field_needs_change=None,
         deleted=None, initial=None, requires_finalizer=None,
+        status_prefix=None,
     ))
 
     await process_resource_event(
@@ -87,6 +88,7 @@ async def test_stealth_mode_with_mismatching_handlers(
         selector=selector, annotations=annotations, labels=labels, when=when,
         field=None, value=None, old=None, new=None, field_needs_change=None,
         deleted=deleted, initial=initial, requires_finalizer=None,
+        status_prefix=None,
     ))
 
     await process_resource_event(

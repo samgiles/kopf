@@ -179,6 +179,8 @@ class ResourceChangingRegistry(ResourceRegistry[
         handlers.ResourceChangingHandler,
         causation.ResourceChangingCause,
 ]):
+        callbacks.ResourceChangingFn,
+        handlers.ResourceChangingHandler]):
 
     def iter_handlers(
             self,

@@ -1,4 +1,5 @@
 from typing import Mapping
+from unittest.mock import Mock
 
 import freezegun
 import pytest
@@ -14,10 +15,15 @@ from kopf.structs.handlers import Activity, ActivityHandler
 from kopf.structs.ids import HandlerId
 
 
-def test_activity_error_exception():
-    outcome = HandlerOutcome(final=True)
+@pytest.fixture()
+def handler():
+    return Mock(id=HandlerId('id'), spec_set=['id'])
+
+
+def test_activity_error_exception(handler):
+    outcome = HandlerOutcome(final=True, handler=handler)
     outcomes: Mapping[HandlerId, HandlerOutcome]
-    outcomes = {HandlerId('id'): outcome}
+    outcomes = {handler.id: outcome}
     error = ActivityError("message", outcomes=outcomes)
     assert str(error) == "message"
     assert error.outcomes == outcomes

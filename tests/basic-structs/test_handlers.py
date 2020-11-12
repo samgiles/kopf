@@ -59,6 +59,7 @@ def test_resource_handler_with_all_args(mocker):
     new = mocker.Mock()
     field_needs_change = mocker.Mock()
     requires_finalizer = mocker.Mock()
+    status_prefix = mocker.Mock()
     handler = ResourceChangingHandler(
         fn=fn,
         id=id,
@@ -80,6 +81,7 @@ def test_resource_handler_with_all_args(mocker):
         new=new,
         field_needs_change=field_needs_change,
         requires_finalizer=requires_finalizer,
+        status_prefix=status_prefix,
     )
     assert handler.fn is fn
     assert handler.id is id
@@ -101,3 +103,5 @@ def test_resource_handler_with_all_args(mocker):
     assert handler.new is new
     assert handler.field_needs_change is field_needs_change
     assert handler.requires_finalizer is requires_finalizer
+    assert handler.status_prefix is status_prefix
+
