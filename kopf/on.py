@@ -423,7 +423,7 @@ def timer(  # lgtm[py/similar-function]
             errors=errors, timeout=timeout, retries=retries, backoff=backoff, cooldown=cooldown,
             labels=labels, annotations=annotations, when=when,
             initial_delay=initial_delay, requires_finalizer=True,
-            sharp=sharp, idle=idle, interval=interval,
+            sharp=sharp, idle=idle, interval=interval, status_prefix=status_prefix,
         )
         real_registry.resource_spawning_handlers[real_resource].append(handler)
         return fn
