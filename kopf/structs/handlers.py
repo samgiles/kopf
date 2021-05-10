@@ -184,6 +184,7 @@ class ResourceTimerHandler(ResourceSpawningHandler):
     sharp: Optional[bool]
     idle: Optional[float]
     interval: Optional[float]
+    status_prefix: Optional[bool]
 
     def __str__(self) -> str:
         return f"Timer {self.id!r}"
