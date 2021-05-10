@@ -113,7 +113,7 @@ def test_switched_from_passive_to_active(storage, handler):
 def test_passed_through_with_outcomes_when_passive(storage, handler):
     body = {'status': {'kopf': {'progress': {'some-id': {'purpose': None}}}}}
     state = State.from_storage(body=Body(body), handlers=[handler], storage=storage)
-    state = state.with_outcomes({'some-id': HandlerOutcome(final=True)})
+    state = state.with_outcomes({'some-id': HandlerOutcome(handler=handler, final=True)})
     assert len(state) == 1
     assert state['some-id'].active is False
 
@@ -121,7 +121,7 @@ def test_passed_through_with_outcomes_when_passive(storage, handler):
 def test_passed_through_with_outcomes_when_active(storage, handler):
     state = State.from_scratch()
     state = state.with_handlers([handler])
-    state = state.with_outcomes({'some-id': HandlerOutcome(final=True)})
+    state = state.with_outcomes({'some-id': HandlerOutcome(handler=handler, final=True)})
     assert len(state) == 1
     assert state['some-id'].active is True
 
@@ -334,7 +334,7 @@ def test_issue_601_deletion_supersedes_other_processing(storage, reason):
     assert state.done == False
     assert state.delays == [0.0]
 
-    state = state.with_outcomes({'delete_fn': HandlerOutcome(final=True)})
+    state = state.with_outcomes({'delete_fn': HandlerOutcome(handler=delete_handler9, final=True)})
 
     assert state.extras == {reason: StateCounters(success=1, failure=1, running=1)}
     assert state.counts == StateCounters(success=1, failure=0, running=0)

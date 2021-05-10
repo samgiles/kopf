@@ -56,7 +56,7 @@ def handler_factory(registry, selector):
             initial=None, deleted=None, requires_finalizer=None,
             selector=selector, annotations=None, labels=None, when=None,
             field=None, value=None, old=None, new=None, field_needs_change=None,
-            reason=None,
+            reason=None, status_prefix=None,
         ), **kwargs))
         registry._resource_changing.append(handler)
         return handler

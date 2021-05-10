@@ -501,23 +501,6 @@ def test_subhandler_imperatively(parent_handler, cause_factory):
     assert handlers[0].fn is fn
 
 
-def test_subhandler_with_all_kwargs(parent_handler, cause_factory):
-    cause = cause_factory(reason=Reason.UPDATE)
-
-    registry = ResourceChangingRegistry()
-    subregistry_var.set(registry)
-
-    with context([(handler_var, parent_handler)]):
-        @kopf.on.this(status_prefix = False)
-        def fn(**_):
-            pass
-
-    handlers = registry.get_handlers(cause)
-    assert len(handlers) == 1
-    assert handlers[0].fn is fn
-    assert handlers[0].status_prefix == False
-
-
 @pytest.mark.parametrize('decorator, kwargs', [
     (kopf.index, {}),
     (kopf.on.event, {}),
